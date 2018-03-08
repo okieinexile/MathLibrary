@@ -105,20 +105,21 @@ def divided_difference_poly(knots, values, pVal):
        y=y+coeffs[i]*p
     return(y)
     
-def hermite_poly(knots,values, pVal):
-    # knots is a list of numbers
-    # vaules is a list of list of numbers
-    # pVal is a number
-    lk=len(knots)
-    lv=len(values)
-    if lk!=lv:
-        print('knots and values of different lenghts')
-        return(False)
-    kSet={k for k in knots}
-    lks=len(kSet)
-    if lks!=lk:
-        print('knots not distinct')
-        return(False)
+def hermite_poly(filename,t):
+    c,X=hermite_dd_table(filename)
+    coeffs=list()
+    N=c.shape[0]
+    for i in range(N):
+        coeffs.append(c[0,i])
+    prod=1
+    S=coeffs[0]
+    for i in range(1,len(X)):
+        prod=prod*(t-X[i-1])
+        S=S+coeffs[i]*prod
+    return S
+
+    
+ 
     
 def divided_difference_table(knots,values):
     """This produces a divided difference table for the data given
@@ -181,7 +182,6 @@ def hermite_dd_table(filename):
         for i in range(1,len(row)):
             c[level,i-1]=row[i]/factorial(i-1)
         level=level+len(row)-1
-    print(c)
     
     ##########
     # Divided Difference Algorithm
@@ -191,7 +191,7 @@ def hermite_dd_table(filename):
         for i in range(N-j):
             if X[i+j]!=X[i]:
                 c[i,j]=(c[i+1,j-1]-c[i,j-1])/(X[i+j]-X[i])
-    return c
+    return (c,X)
 
     
     
